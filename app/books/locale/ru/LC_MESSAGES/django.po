@@ -1,0 +1,84 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-08-23 11:55+0300\n"
+"PO-Revision-Date: 2023-08-23 11:58+0000\n"
+"Last-Translator:   <admin@localhost>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
+"X-Translated-Using: django-rosetta 0.9.9\n"
+
+#: .\books\forms.py:7 .\books\models.py:5
+msgid "Title"
+msgstr "Название"
+
+#: .\books\forms.py:8 .\books\models.py:6
+msgid "Author"
+msgstr "Автор"
+
+#: .\books\forms.py:9 .\books\models.py:7
+msgid "Price"
+msgstr "Цена"
+
+#: .\books\models.py:8
+msgid "Read"
+msgstr "Прочитана"
+
+#: .\books\urls.py:16
+msgid "create_book/"
+msgstr "создать_книгу/"
+
+#: .\books\urls.py:17
+msgid "update_book_details/<int:pk>/"
+msgstr "обновить_детали_книги/<int:pk>/"
+
+#: .\books\urls.py:18
+msgid "book_detail/<int:pk>/"
+msgstr "детали_книги/<int:pk>/"
+
+#: .\books\urls.py:19
+msgid "delete_book/<int:pk>/"
+msgstr "удалить_книгу/<int:pk>/"
+
+#: .\books\urls.py:20
+msgid "update_book_status/<int:pk>/"
+msgstr "обновить_статус_книги/<int:pk>/"
+
+#: .\books\urls.py:21
+msgid "book_list_sort/<filter>/<direction>/"
+msgstr "сортировка_списка_книг/<filter>/<direction>/"
+
+#: .\books\views.py:63
+msgid "id"
+msgstr "идентификатор"
+
+#: .\books\views.py:64
+msgid "title"
+msgstr "название"
+
+#: .\books\views.py:65
+msgid "author"
+msgstr "автор"
+
+#: .\books\views.py:66
+msgid "price"
+msgstr "цена"
+
+#: .\books\views.py:67
+msgid "read"
+msgstr "прочитана"
+
+#: .\books\views.py:70
+msgid "ascend"
+msgstr "возрастание"

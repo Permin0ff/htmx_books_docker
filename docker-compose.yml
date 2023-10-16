@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  web:
+    # Берем Dockerfile из каталога app
+    build: app
+    # Запускаем тестовый сервер
+    command: python manage.py runserver 0.0.0.0:8000
+    # куда будут помещены данные из каталога app
+    volumes:
+      - ./app/:/usr/src/app/
+    # Открываем порт 8000 внутри и снаружи
+    ports:
+      - 8000:8000
+    # Файл содержащий переменные для контейнера
+    env_file:
+      - .env
+    # Дожидаемся запуска контейнера db и memcached
+    depends_on:
+      - db
+      - memcached
+  db:
+      image: postgres:15
+      volumes:
+        - postgres_data:/var/lib/postgresql/data/
+      environment:
+        - POSTGRES_USER=book_django
+        - POSTGRES_PASSWORD=pass_book_django
+        - POSTGRES_DB=book_django
+  memcached:
+      image: memcached:1.6.21
+      ports:
+        - 11211:11211
+volumes:
+  postgres_data:

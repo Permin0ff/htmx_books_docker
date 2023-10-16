@@ -1,0 +1,199 @@
+{% load i18n %}
+{% load cache %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}{% trans "Books" %}{% endblock title %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static '../static/base.css' %}">
+</head>
+
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+
+    <div class="container">
+        <div class="row text-end mt-1">
+            <div class="col">
+                {% get_current_language as LANGUAGE_CODE %}
+                {% get_available_languages as LANGUAGES %}
+                {% get_language_info_list for LANGUAGES as languages %}
+                {% for language in languages %}
+                    {% if language.code == LANGUAGE_CODE %}
+                        <u>{{ language.name_local }}</u>
+                    {% else %}
+                        <a href="/{{ language.code }}/">{{ language.name_local }}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col">
+                <!-- Форма для добавления новой книги -->
+                {% include "partial_create_book_form.html" %}
+
+                <!-- Таблица книг -->
+                <form class="form-inline">
+                <table class="table table-bordered table-sm mt-5">
+                <!-- Начало кэширования заголовка таблицы -->
+                {% cache 600 table_header LANGUAGE_CODE %}
+		    {% trans "id" as id %}{% trans "title" as title %}
+		    {% trans "author" as author %}{% trans "price" as price %}
+                    {% trans "read" as read %}{% trans "ascend" as ascend %}
+		    {% trans "descend" as descend %}
+                    <thead>
+                        <tr>
+                            <!-- Заголовки столбцов таблицы -->
+
+                            <!-- Заголовок номера книги -->
+                            <th scope="col" style="width: 10%" class="text-center">
+                                <small>
+                                    {% trans "No." %}
+                                    <a href=""
+                                       hx-get="{% url 'book_list_sort' filter=id direction=ascend %}"
+                                       hx-target="#book-list"
+                                       hx-swap="innerHTML" >
+                                        <i class="table-icon bi bi-arrow-down-square ms-1 {% trans 'id-ascend' %} disabled-button"></i>
+                                    </a>
+                                    <a href=""
+                                       hx-get="{% url 'book_list_sort' filter=id direction=descend %}"
+                                       hx-target="#book-list"
+                                       hx-swap="innerHTML" >
+                                        <i class="table-icon bi bi-arrow-up-square {% trans 'id-descend' %}"></i>
+                                    </a>
+                                </small>
+                            </th>
+
+                            <!-- Заголовок названия книги -->
+                            <th scope="col" style="width: 26%" class="text-center">
+                                <small>
+                                    {% trans "Title" %}
+                                    <a href=""
+                                       hx-get="{% url 'book_list_sort' filter=title direction=ascend %}"
+                                       hx-target="#book-list"
+                                       hx-swap="innerHTML" >
+                                        <i class="table-icon bi bi-arrow-down-square ms-1 {% trans 'title-ascend' %}"></i>
+                                    </a>
+                                    <a href=""
+                                       hx-get="{% url 'book_list_sort' filter=title direction=descend %}"
+                                       hx-target="#book-list"
+                                       hx-swap="innerHTML" >
+                                        <i class="table-icon bi bi-arrow-up-square {% trans 'title-descend' %}"></i>
+                                    </a>
+                                </small>
+                            </th>
+
+                            <!-- Заголовок автора книги -->
+                            <th scope="col" style="width: 26%" class="text-center">
+                                <small>
+                                    {% trans "Author" %}
+                                    <a href=""
+                                       hx-get="{% url 'book_list_sort' filter=author direction=ascend %}"
+                                       hx-target="#book-list"
+                                       hx-swap="innerHTML" >
+                                        <i class="table-icon bi bi-arrow-down-square ms-1 {% trans 'author-ascend' %}"></i>
+                                    </a>
+                                    <a href=""
+                                       hx-get="{% url 'book_list_sort' filter=author direction=descend %}"
+                                       hx-target="#book-list"
+                                       hx-swap="innerHTML" >
+                                        <i class="table-icon bi bi-arrow-up-square {% trans 'author-descend' %}"></i>
+                                    </a>
+                                </small>
+                            </th>
+
+                            <!-- Заголовок цены книги -->
+                            <th scope="col" style="width: 11%" class="text-center">
+                                <small>
+                                    {% trans "Price ($)" %}
+                                    <a href=""
+                                       hx-get="{% url 'book_list_sort' filter=price direction=ascend %}"
+                                       hx-target="#book-list"
+                                       hx-swap="innerHTML" >
+                                        <i class="table-icon bi bi-arrow-down-square ms-1 {% trans 'price-ascend' %}"></i>
+                                    </a>
+                                    <a href=""
+                                       hx-get="{% url 'book_list_sort' filter=price direction=descend %}"
+                                       hx-target="#book-list"
+                                       hx-swap="innerHTML" >
+                                        <i class="table-icon bi bi-arrow-up-square {% trans 'price-descend' %}"></i>
+                                    </a>
+                                </small>
+                            </th>
+
+                            <!-- Заголовок статуса книги -->
+                            <th scope="col" style="width: 11%" class="text-center">
+                                <small>
+                                    {% trans "Status" %}
+                                    <a href=""
+                                       hx-get="{% url 'book_list_sort' filter=read direction=descend %}"
+                                       hx-target="#book-list"
+                                       hx-swap="innerHTML" >
+                                        <i class="table-icon bi bi-arrow-down-square ms-1 {% trans 'read-descend' %}"></i>
+                                    </a>
+                                    <a href=""
+                                       hx-get="{% url 'book_list_sort' filter=read direction=ascend %}"
+                                       hx-target="#book-list"
+                                       hx-swap="innerHTML" >
+                                        <i class="table-icon bi bi-arrow-up-square {% trans 'read-ascend' %}"></i>
+                                    </a>
+                                </small>
+                            </th>
+
+                            <!-- Заголовок кнопок действия -->
+                            <th scope="col" style="width: 16%" class="text-center">
+                                <small>
+                                    {% trans "Actions" %}
+                                </small>
+                            </th>
+
+                        </tr>
+                    </thead>
+                {% endcache %}
+                <!-- Конец кэширования заголовка таблицы -->
+                    <!-- Список книг -->
+                    <tbody id="book-list">
+                        {% include "partial_book_list.html" %}
+                    </tbody>
+
+                </table>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/htmx.org@1.9.4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+
+    <script>
+        function cngElementsAtr(cls, atr, val){
+            var elems = document.getElementsByClassName(cls);
+            for(var i = 0; i < elems.length; i++) {
+                elems[i][atr] = val;
+            }
+        }
+        document.body.addEventListener('htmx:afterRequest', (event) => {
+            path_str = decodeURI(event.detail.pathInfo.requestPath);
+            if(path_str.includes("{% trans 'create_book' %}")){
+                cngElementsAtr('clrtxt', 'value', '');
+            }else if(path_str.includes("{% trans 'update_book_details' %}")){
+                if(event.detail.requestConfig.verb === 'put'){
+                    cngElementsAtr('disbtn', 'disabled', true);
+                }else{
+                    cngElementsAtr('disbtn', 'disabled', false);
+                }
+            }else if(path_str.includes("{% trans 'book_detail' %}")){
+                cngElementsAtr('disbtn', 'disabled', false);
+            }else if(path_str.includes("{% trans 'book_list_sort' %}")){
+                path_arr = path_str.split('/');
+                path_arr.pop()
+                curr_class = path_arr.pop()
+                curr_class = path_arr.pop() + '-' + curr_class
+                document.getElementsByClassName('disabled-button')[0].classList.remove('disabled-button');
+                document.getElementsByClassName(curr_class)[0].classList.add('disabled-button');
+            }
+        });
+    </script>
+</body>
+</html>

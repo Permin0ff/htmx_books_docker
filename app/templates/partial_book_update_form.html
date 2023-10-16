@@ -1,0 +1,57 @@
+{% load i18n %}
+                    <tr class="{% if book.read %}grey-text{% endif %}">
+                        <!-- Ячейка номера книги -->
+                        <td class="align-middle text-center ps-2">
+                            {{ book.id }}
+                        </td>
+
+                        <!-- Ячейка названия книги -->
+                        <td class="align-middle ps-2">
+                            {{ form.title }}
+                        </td>
+
+                        <!-- Ячейка автора книги -->
+                        <td class="align-middle ps-2">
+                            {{ form.author }}
+                        </td>
+
+                        <!-- Ячейка цены книги -->
+                        <td  class="align-middle text-center">
+                            {{ form.price }}
+                        </td>
+
+                        <!-- Ячейка состояния -->
+                        <td class="align-middle text-center">
+                            {% if not book.read %}
+                                <!-- Кнопка "Unread" -->
+                                <button class="table-button status-button btn btn-primary btn-sm" disabled>
+                                    {% trans "Unread" %}
+                                </button>
+                            {% else %}
+                                <!-- Кнопка "Read" -->
+                                <button class="table-button status-button btn btn-secondary btn-sm" disabled>
+                                    {% trans "Read" %}
+                                </button>
+                            {% endif %}
+                        </td>
+
+                        <!--  Ячейка кнопок действия -->
+                        <td class="align-middle text-center">
+                            <!-- Кнопка "Save" -->
+                            <button type="submit"
+                                    class="table-button any-button btn btn-success btn-sm me-2"
+                                    hx-post="{% url 'update_book_details' book.id %}"
+                                    hx-target="closest tr"
+                                    hx-swap="outerHTML"
+                                    hx-include="closest tr" >
+                                {% trans "Save" %}
+                            </button>
+                            <!-- Кнопка "Cancel" -->
+                            <button class="table-button any-button btn btn-warning btn-sm"
+                                    hx-get="{% url 'book_detail' book.id %}"
+                                    hx-target="closest tr"
+                                    hx-swap="outerHTML" >
+                                {% trans "Cancel" %}
+                            </button>
+                        </td>
+                    </tr>
