@@ -6,7 +6,7 @@ then
 
     # Проверяем доступность хоста и порта
     while ! nc -z $SQL_HOST $SQL_PORT; do
-      sleep 10
+      sleep 1
     done
 
     echo "PostgreSQL запущен"
