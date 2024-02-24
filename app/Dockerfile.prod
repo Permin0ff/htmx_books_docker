@@ -47,7 +47,6 @@ RUN pip install --no-cache /wheels/*
 
 # копирование entrypoint-prod.sh
 COPY ./entrypoint.prod.sh $APP_HOME
-ENTRYPOINT ["entrypoint.prod.sh"]
 
 
 # копирование проекта Django
@@ -58,3 +57,6 @@ RUN chown -R app:app $APP_HOME
 
 # изменение рабочего пользователя
 USER app
+
+RUN chmod +x /home/app/web/entrypoint.prod.sh
+ENTRYPOINT ["/home/app/web/entrypoint.prod.sh"]
