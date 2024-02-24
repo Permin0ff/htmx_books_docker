@@ -8,13 +8,9 @@ services:
       dockerfile: Dockerfile.prod
     # Запускаем сервер gunicorn
     command: gunicorn core.wsgi:application --bind 0.0.0.0:8000
-    # Слушаем порт 8000
-    expose:
-      - 8000
-    # Подключаем статические и медиа файлы
-    volumes:
-      - static_volume:/home/app/web/static
-      - media_volume:/home/app/web/media
+    # Открываем порт 8000 внутри и снаружи
+    ports:
+      - 8000:8000
     # Файл содержащий переменные для контейнера
     env_file:
       - .env.prod
@@ -34,17 +30,5 @@ services:
       image: memcached:1.6.21
       ports:
         - 11211:11211
-  nginx:
-    build: ./nginx
-    # Подключаем статические и медиа файлы
-    volumes:
-      - static_volume:/home/app/web/static
-      - media_volume:/home/app/web/media
-    ports:
-      - 80:80
-    depends_on:
-      - web
 volumes:
   postgres_data:
-  static_volume:
-  media_volume:

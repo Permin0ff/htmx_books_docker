@@ -47,6 +47,8 @@ RUN pip install --no-cache /wheels/*
 
 # копирование entrypoint-prod.sh
 COPY ./entrypoint.prod.sh $APP_HOME
+ENTRYPOINT ["entrypoint.prod.sh"]
+
 
 # копирование проекта Django
 COPY . $APP_HOME

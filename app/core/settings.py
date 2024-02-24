@@ -1,4 +1,5 @@
 from django.utils.translation import gettext_lazy as _
+
 """
 Django settings for core project.
 
@@ -12,13 +13,13 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 from dotenv import load_dotenv
 import os
+
 load_dotenv()
 
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -78,21 +79,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
     "default": {
         "ENGINE": str(os.getenv("SQL_ENGINE")),
-        "NAME": str(os.getenv("SQL_DATABASE")),
-        "USER": str(os.getenv("SQL_USER")),
-        "PASSWORD": str(os.getenv("SQL_PASSWORD")),
+        "NAME": str(os.getenv("POSTGRES_DB")),
+        "USER": str(os.getenv("POSTGRES_USER")),
+        "PASSWORD": str(os.getenv("POSTGRES_PASSWORD")),
         "HOST": str(os.getenv("SQL_HOST")),
         "PORT": str(os.getenv("SQL_PORT")),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -111,7 +110,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -132,7 +130,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -160,3 +157,8 @@ CACHES = {
 }
 
 INTERNAL_IPS = str(os.getenv('INTERNAL_IPS')).split(" ")
+if DEBUG:
+    import socket
+
+    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS += [ip[:-1] + '1' for ip in ips]
