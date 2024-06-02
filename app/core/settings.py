@@ -85,9 +85,9 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": str(os.getenv("SQL_ENGINE")),
-        "NAME": str(os.getenv("POSTGRES_DB")),
-        "USER": str(os.getenv("POSTGRES_USER")),
-        "PASSWORD": str(os.getenv("POSTGRES_PASSWORD")),
+        "NAME": str(os.getenv("SQL_DATABASE")),
+        "USER": str(os.getenv("SQL_USER")),
+        "PASSWORD": str(os.getenv("SQL_PASSWORD")),
         "HOST": str(os.getenv("SQL_HOST")),
         "PORT": str(os.getenv("SQL_PORT")),
     }
