@@ -85,14 +85,13 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": str(os.getenv("SQL_ENGINE")),
-        "NAME": str(os.getenv("POSTGRES_DB")),
-        "USER": str(os.getenv("POSTGRES_USER")),
-        "PASSWORD": str(os.getenv("POSTGRES_PASSWORD")),
+        "NAME": str(os.getenv("SQL_DATABASE")),
+        "USER": str(os.getenv("SQL_USER")),
+        "PASSWORD": str(os.getenv("SQL_PASSWORD")),
         "HOST": str(os.getenv("SQL_HOST")),
         "PORT": str(os.getenv("SQL_PORT")),
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -134,15 +133,19 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-# То как статический файл будет отображаться в url
-# Пример /static/1.jpg
-STATIC_URL = "/static/"
-# По какому пути можно будет найти файлы
-STATIC_ROOT = BASE_DIR / "static"
+# URL-адрес директории статических файлов
+STATIC_URL = 'static/'
 
-# Аналогично static файлам
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+# Директории статических файлов
+
+import sys
+
+STATICFILES_DIRS = []
+
+if sys.argv[1] == 'runserver':
+	STATICFILES_DIRS += [os.path.join(BASE_DIR, 'static'),]
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

@@ -25,38 +25,32 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requir
 
 FROM python:3.12.0-alpine
 
-# создаем директорию для пользователя
-RUN mkdir -p /home/app
-
-# создаем отдельного пользователя
-RUN addgroup -S app && adduser -S app -G app
-
-# создание каталога для приложения
 ENV HOME=/home/app
 ENV APP_HOME=/home/app/web
-RUN mkdir $APP_HOME
-RUN mkdir $APP_HOME/static
-RUN mkdir $APP_HOME/media
-WORKDIR $APP_HOME
 
-# установка зависимостей и копирование из builder
-RUN apk update && apk add libpq
+# создаем домашнюю директорию для пользователя(/home/app) и директорию для проекта(/home/app/web)
+# создаем группу app и отдельного пользователя app
+RUN mkdir -p $APP_HOME \
+    && addgroup -S app \
+    && adduser -S app -G app \
+    && apk update \
+    && apk add libpq
+
+# копирование из builder и установка зависимостей
 COPY --from=builder /usr/src/app/wheels /wheels
-COPY --from=builder /usr/src/app/requirements.txt .
 RUN pip install --no-cache /wheels/*
 
-# копирование entrypoint-prod.sh
-COPY ./entrypoint.prod.sh $APP_HOME
+# устанавливаем рабочую директорию
+WORKDIR $APP_HOME
 
+# копирование проекта Django в рабочую директорию
+COPY . .
 
-# копирование проекта Django
-COPY . $APP_HOME
+# изменение владельца, для всех директорий и файлов проекта, на пользователя app
+RUN chown -R app:app .
 
-# изменение прав для пользователя app
-RUN chown -R app:app $APP_HOME
-
-# изменение рабочего пользователя
+# изменение рабочего пользователя на app
 USER app
 
-RUN chmod +x /home/app/web/entrypoint.prod.sh
-ENTRYPOINT ["/home/app/web/entrypoint.prod.sh"]
+RUN chmod +x entrypoint.prod.sh
+ENTRYPOINT ["./entrypoint.prod.sh"]

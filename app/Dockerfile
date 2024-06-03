@@ -8,10 +8,11 @@ WORKDIR /usr/src/app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# install dependencies
-RUN pip install --upgrade pip
-COPY requirements.txt /usr/src/app
-RUN pip install -r requirements.txt
+# copy project dir (app) to WORKDIR (/usr/src/app)
+COPY . .
 
-# copy project
-COPY .. /usr/src/app
+# upgrade pip
+RUN pip install --upgrade pip
+
+# install dependencies
+RUN pip install -r requirements.txt
