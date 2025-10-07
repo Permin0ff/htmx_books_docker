@@ -1,0 +1,52 @@
+# Builder stage #
+
+FROM python:3.12-alpine AS builder
+
+WORKDIR /usr/src/app
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# установка зависимостей
+RUN apk update \
+    && apk add postgresql-dev gcc python3-dev musl-dev
+RUN pip install --upgrade pip
+
+# установка зависимостей
+COPY ./requirements.txt .
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
+
+
+# Final stage #
+
+FROM python:3.12-alpine
+
+ENV HOME=/home/app
+ENV APP_HOME=/home/app/web
+
+# создаем домашнюю директорию для пользователя(/home/app) и директорию для проекта(/home/app/web)
+# создаем группу app и отдельного пользователя app
+RUN mkdir -p $APP_HOME \
+    && addgroup -S app \
+    && adduser -S app -G app \
+    && apk update \
+    && apk add libpq
+
+# копирование из builder и установка зависимостей
+COPY --from=builder /usr/src/app/wheels /wheels
+RUN pip install --no-cache /wheels/*
+
+# устанавливаем рабочую директорию
+WORKDIR $APP_HOME
+
+# копирование проекта Django в рабочую директорию
+COPY . .
+
+# изменение владельца, для всех директорий и файлов проекта, на пользователя app
+RUN chown -R app:app .
+
+# изменение рабочего пользователя на app
+USER app
+
+RUN chmod +x entrypoint.prod.sh
+ENTRYPOINT ["./entrypoint.prod.sh"]

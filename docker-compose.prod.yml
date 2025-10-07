@@ -1,0 +1,62 @@
+# Задаём имя проекта
+name: htmx-books-prod
+
+services:
+  web:
+    # Указываем директорию ./app, в которой содержится Dockerfile.prod для сборки образа
+    build:
+      context: ./app
+      dockerfile: Dockerfile.prod
+    # Запускаем сервер Gunicorn
+    command: gunicorn django_htmx.wsgi:application --bind 0.0.0.0:8000
+    # Примонтируем том static-data к директории /home/app/web/static контейнера web
+    volumes:
+      - static-data:/home/app/web/static
+    # Пробрасываем 8000 порт контейнера на 8000 порт локалхоста(127.0.0.1:8000)
+    # ports:
+    #   - 127.0.0.1:8000:8000
+    # Файл содержащий переменные окружения для контейнера
+    env_file:
+      - .env.prod
+    # Дожидаемся запуска контейнеров db и memcached
+    depends_on:
+      - db
+      - memcached
+
+  db:
+    # Берём образ БД PostgreSQL версии 15
+    image: postgres:15
+    # Примонтируем том postgres-data к директории /var/lib/postgresql/data контейнера db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    # Файл содержащий переменные окружения для контейнера
+    env_file:
+      - .env.prod
+    # Используем значения переменных окружения из .env.prod файла
+    environment:
+      - POSTGRES_USER=${SQL_USER}
+      - POSTGRES_PASSWORD=${SQL_PASSWORD}
+      - POSTGRES_DB=${SQL_DATABASE}
+
+  memcached:
+    # Берём образ Мemcached версии 1.6.21
+    image: memcached:1.6.21
+
+  nginx:
+    # Указываем директорию ./nginx, в которой содержится Dockerfile для сборки образа
+    build: ./nginx
+    # Примонтируем том static-data к директории /home/app/web/static контейнера nginx
+    volumes:
+      - static-data:/home/app/web/static
+    # Пробрасываем 80 порт контейнера на 80 порт локальной машины(порт будет доступен из вне)
+    ports:
+      - 80:80
+    # Дожидаемся запуска контейнера web
+    depends_on:
+      - web
+
+volumes:
+  # Объявляем том postgres-data для хранения данных PostgreSQL
+  postgres-data:
+  # Объявляем том static-data для хранения статических файлов
+  static-data:
